@@ -586,7 +586,10 @@ env_del_multiple(
                 //Check if the key exists in the db.
                 //Grabs a write lock
                 r = db_getf_set(db, txn, lock_flags[which_db]|DB_SERIALIZABLE|DB_RMW, del_key, ydb_getf_do_nothing, NULL);
-                if (r != 0) goto cleanup;
+                if (r != 0) {
+                    printf(" got error %d on %d db and %d key", r, which_db, which_key);
+                    goto cleanup;
+                }
             } else if (db->i->lt && !(lock_flags[which_db] & DB_PRELOCKED_WRITE)) {  //Do locking if necessary.
                 //Needs locking
                 r = toku_db_get_point_write_lock(db, txn, del_key);
